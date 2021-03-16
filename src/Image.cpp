@@ -1,5 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
 #define BYTE_BOUND(value) value < 0 ? 0 : (value > 255 ? 255 : value)
 #include <iostream>
 #include <algorithm>
@@ -7,6 +8,7 @@
 #include "Image.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
+#include "stb_image_resize.h"
 
 
 
@@ -57,7 +59,12 @@ bool Image::write(const char* filename) {
   }
   return success != 0;
 }
-
+int Image::getWidth() {
+	return w;
+}
+int Image::getHeight() {
+	return h;
+}
 ImageType Image::get_file_type(const char* filename) {
 	const char* ext = strrchr(filename, '.');
 	if(ext != nullptr) {
@@ -76,9 +83,9 @@ ImageType Image::get_file_type(const char* filename) {
 	}
 	return PNG;
 }
-Image& Image::grayscale_avg() {
+Image& Image::grayscaleAvg() {
 	if (channels < 3) {
-		std::cout << "This image is grayscaled image." << std::endl;
+		std::cout << "The image has already been grayscaled" << std::endl;
 		return *this;
 	}
 	for (int i = 0; i < size; i += channels) {
@@ -89,9 +96,9 @@ Image& Image::grayscale_avg() {
 	return *this;
 	
 }
-Image& Image::grayscale_lig() {
+Image& Image::grayscaleLig() {
 	if (channels < 3) {
-		std::cout << "This image is grayscaled image." << std::endl;
+		std::cout << "The image has already been grayscaled" << std::endl;
 		return *this;
 	}
 	for (int i = 0; i < size; i += channels) {
@@ -101,9 +108,9 @@ Image& Image::grayscale_lig() {
 
 	return *this;
 }
-Image& Image::grayscale_lum() {
+Image& Image::grayscaleLum() {
 	if (channels < 3) {
-		std::cout << "This image is grayscaled image." << std::endl;
+		std::cout << "The image has already been grayscaled" << std::endl;
 		return *this;
 	}
 	for (int i = 0; i < size; i += channels) {
@@ -112,4 +119,8 @@ Image& Image::grayscale_lum() {
 	}
 
 	return *this;
+}
+void Image::copyResized(Image *image) {
+	stbir_resize_uint8(image->data, image->w, image->h, 0, data, w, h, 0, 3);
+
 }

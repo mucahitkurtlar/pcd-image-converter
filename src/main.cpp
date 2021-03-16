@@ -15,18 +15,27 @@ int main(int argc, char** argv)
             "\t--resized\t-r\tExport resized image\n";
         return 0;
     }
-	Image test("dexter.jpeg");
-    //test.write("copy.png");
-    Image white = test;
-    //for (int i = 0; i < white.w * white.channels; i++) {
-    //    white.data[i] = 255;
-    //}
-    //white.write("white.png");
-    //Image blank(100, 100, 3);
-    //blank.write("blank.jpg");
-    test.grayscale_lum();
-    test.write("gray_lum.jpg");
 
-    
+
+
+	Image firstImage("lena.png");
+    int imw = firstImage.getWidth();
+    int imh = firstImage.getHeight();
+    firstImage.grayscaleAvg();
+    firstImage.write("grayAver.jpg");
+    int selectedW = 84;
+    int selectedH = 48;
+
+    if (84 * imh / imw <= 48) {
+        selectedH = 84 * imh / imw;
+        std::cout << "Auto fixed for max width" << selectedW << "x" << selectedH << "px" <<  std::endl;
+    } else if (48 * imw / imh <= 84) {
+        selectedW = 48 * imw / imh;
+        std::cout << "Auto fixed for max height " << selectedW << "x" << selectedH << "px" << std::endl;
+    }
+    Image resized(selectedW, selectedH, 3);
+    resized.copyResized(&firstImage);
+    resized.write("resized.jpg");
+
 	return 0;
 }
